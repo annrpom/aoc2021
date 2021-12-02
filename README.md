@@ -8,7 +8,7 @@ Credits to [Hazel](https://git.bicompact.space/hazel/aoc-2021) for providing a n
 
 ### Setup and Workflow
 
-First and foremost, you will need everything in `bin` and `lib`, along with an empty `data` directory. Use the provided template, `templ.rkt` as you see fit (if you do, make sure you replace the `N`s with a numerical value of whatever day you are solving).
+First and foremost, you will need everything in `bin` and `lib`, along with an empty `data` directory. Use the provided template, `templ.rkt` as you see fit (if you do, make sure you replace the `N`s with the numerical value of whatever day you are solving).
 Next, in your shell config, you will want to add the following lines:
 ```zsh
 export AOC_YEAR="2021"

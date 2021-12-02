@@ -1,11 +1,53 @@
 #lang racket
 (require "lib/common.rkt")
+(require rackunit)
+
+;                    
+;                    
+;          ;     ;;  
+;          ;    ; ;  
+;   ;;;;  ;;;;    ;  
+;   ;   ;  ;      ;  
+;   ;   ;  ;      ;  
+;   ;   ;  ;      ;  
+;   ;;;;   ;;;  ;;;;;
+;   ;                
+;   ;                
+;                    
 
 (define (dayNa lst)
   (void))
 
+
+;                    
+;                    
+;          ;     ;;; 
+;          ;    ;   ;
+;   ;;;;  ;;;;      ;
+;   ;   ;  ;       ;;
+;   ;   ;  ;      ;; 
+;   ;   ;  ;     ;   
+;   ;;;;   ;;;  ;;;;;
+;   ;                
+;   ;                
+;                    
+
 (define (dayNb lst)
   (void))
+
+
+;                          
+;                 ;        
+;                          
+;                ;;        
+;   ;;;;; ;;;;    ;   ; ;; 
+;   ; ; ;     ;   ;   ;;  ;
+;   ; ; ;  ;;;;   ;   ;   ;
+;   ; ; ; ;   ;   ;   ;   ;
+;   ; ; ; ;;;;; ;;;;; ;   ;
+;                          
+;                          
+;                          
 
 (module+ main
   (call-with-input-file "data/dayN.txt"
