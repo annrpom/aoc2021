@@ -1,0 +1,15 @@
+#!/usr/bin/env racket
+#lang racket
+(require "../lib/aoc.rkt")
+
+(command-line
+ #:program "get-input"
+ #:args (day)
+ (define in (aoc-fetch-input (getenv "AOC_YEAR") day (getenv "AOC_SESSION")))
+ (define out (build-path (current-directory)
+                         "data"
+                         (string-append "day" day ".txt")))
+ (cond [(file-exists? out) (displayln "input data already exists")]
+       [else
+        (call-with-output-file out (lambda (prt) (copy-port in prt)))
+        (displayln "done!")]))

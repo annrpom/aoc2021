@@ -1,0 +1,93 @@
+#!/usr/bin/env racket
+#lang racket
+(require "../lib/aoc.rkt"
+         ansi-color
+         html
+         xml)
+
+(define erase-line "\033[K")
+
+;; finds a given element of an xexpr
+(define (find-element el doc)
+  (match doc
+    [(list (== el) _ ...) doc]
+    [(list tag attrs children ...)
+     (ormap (curry find-element el) children)]
+    [_ #f]))
+
+(struct style-ast [fg bg fs children] #:transparent)
+;; convert xexpr tree to an ast with lower-level styling
+(define (xexpr->style-ast doc)
+  (match doc
+    [(? string?) (style-ast #f #f #f doc)]
+    [(list (or 'script 'form) _ ...) #f]
+    [(list-no-order 'p (list 'span (list-no-order '(class "share")) _ ...) _ ...) #f]
+    [(list 'li _ children ...)
+     (define out-children (filter identity (map xexpr->style-ast children)))
+     (style-ast #f #f #f (cons (style-ast #f #f #f "- ") out-children))]
+    [(list tag attrs children ...)
+     (define-values [fg bg fs]
+       (match* (tag attrs)
+         [('main _) (values #f #f #f)]
+         [('article _) (values #f #f #f)]
+         [('p (list-no-order '(class "day-success") _ ...)) (values 'yellow #f 'bold)]
+         [('p _) (values #f #f #f)]
+         [('pre _) (values #f #f #f)]
+         [('h2 _) (values #f #f 'bold)]
+         [('ul _) (values #f #f #f)]
+         [('a _) (values 'green #f #f)]
+         [('code _) (values 'white 234 #f)]
+         [('span _) (values #f #f #f)]
+         [('em (list-no-order '(class "star") _ ...)) (values 'yellow #f 'bold)]
+         [('em _) (values #f #f 'bold)]
+         [(_ _)
+          (printf "warning: unhandled ~a ~a\n" tag attrs)
+          (values #f #f #f)]))
+     (define inner-children (filter identity (map xexpr->style-ast children)))
+     (define new-children
+       (if ((or/c 'h2 'pre 'p) tag)
+         (let ([nls (list (style-ast #f #f #f "\n") (style-ast #f #f #f "\n"))])
+           (append nls inner-children nls))
+         inner-children))
+     (style-ast fg bg fs new-children)]))
+
+
+(define (output-style-ast ast)
+  (define num-newlines (make-parameter #f))
+
+  (define (helper ast [prev-bg ""] [prev-fg ""])
+    (match-define (style-ast fg bg fs children) ast)
+    (when bg (background-color bg))
+    (when fg (foreground-color fg))
+    (match children
+      ["\n"
+       (unless (or (false? (num-newlines)) (>= (num-newlines) 2))
+         (num-newlines (add1 (num-newlines)))
+         (display "\n"))]
+      [(? string? str)
+       (num-newlines 0)
+       (if (string-contains? str "\n")
+         (for ([i (in-naturals)] [line (in-list (string-split (string-trim str "\n") "\n"))])
+           (color-display (format (if (zero? i) "~a~a" "\n~a~a") erase-line line)))
+         (color-display str))]
+      [_ (map (lambda (item) (helper item (or bg prev-bg) (or fg prev-fg)))
+              children)])
+    (when prev-bg (background-color prev-bg))
+    (when prev-fg (foreground-color prev-fg)))
+
+  (num-newlines #f)
+  (helper ast))
+
+(command-line
+  #:program "get-challenge"
+  #:args (day)
+  (define in (aoc-fetch-challenge (getenv "AOC_YEAR") day (getenv "AOC_SESSION")))
+  (use-html-spec #f)
+  (define doc-xmls (read-html-as-xml in))
+  (close-input-port in)
+  (define doc `(top-element ,@(map xml->xexpr doc-xmls)))
+
+  (define main (find-element 'main doc))
+  (define ast (xexpr->style-ast main))
+  ; (pretty-write ast)
+  (output-style-ast ast))
