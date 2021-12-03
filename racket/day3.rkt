@@ -29,7 +29,7 @@
         (list 0 0 0 1 0)
         (list 0 1 0 1 0)))
 
-;; [ListOf [DozenOf Bin]] BitInd -> [ListOf Bits]
+;; [ListOf Bin] BitInd -> [ListOf Bit]
 ;; returns the list of bits at the bth position
 (define get-at-bit
   (λ (ls b)
@@ -47,11 +47,11 @@
       [(zero? (car ls)) (*st-bit f (cdr ls) (add1 zeros) ones)]
       [else (*st-bit f (cdr ls) zeros (add1 ones))])))
 
-;; [ListOf [DozenOf Bin]] -> Bin
+;; [ListOf Bin] -> Bin
 (define rate
   (λ (f ls)
     (for/list ([i (in-range 12)])
-      (list (*st-bit f (get-at-bit ls i) 0 0)))))
+      (*st-bit f (get-at-bit ls i) 0 0))))
 
 
 ;; (: binary->natural (-> (Listof (Union 0 1)) Natural))
@@ -63,10 +63,11 @@
       [(null? ls) 0]
       [else (+ (car ls) (* 2 (binary->natural (cdr ls))))])))
 
+;; [ListOf Bin] -> Number
 (define day3a
-  (λ (lst)
-    (let* ([gamma-rep (flatten (rate > lst))]
-           [epsilon-rep (flatten (rate < lst))]
+  (λ (ls)
+    (let* ([gamma-rep (rate > ls)]
+           [epsilon-rep (rate < ls)]
            [gamma (binary->natural (reverse gamma-rep))]
            [epsilon (binary->natural (reverse epsilon-rep))])
       (* gamma epsilon))))
@@ -85,9 +86,28 @@
 ;   ;                
 ;                    
 
+;; [ListOf Bin] -> Bin
+;; return the bin representation of oxygen calc
+(define element
+  (λ (f ls iter)
+    (cond
+      [(null? (cdr ls)) ls]
+      [else (element f (filter (λ (bin)
+                                 (define ind-bit (get-at-bit ls iter))
+                                 (eqv? (*st-bit f ind-bit 0 0) (list-ref bin iter))) ls)
+                     (add1 iter))])))
+
+(check-equal? (element > sanity-check 0) '((1 0 1 1 1))) ;; oxygen
+(check-equal? (element <= sanity-check 0) '((0 1 0 1 0))) ;; co2
+
+
 (define day3b
-  (λ (lst)
-    (void)))
+  (λ (ls)
+    (let* ([bin-oxygen (car (element > ls 0))]
+           [bin-co2 (car (element <= ls 0))]
+           [oxygen (binary->natural (reverse bin-oxygen))]
+           [co2 (binary->natural (reverse bin-co2))])
+      (* oxygen co2))))
 
 
 ;                          
@@ -108,6 +128,5 @@
       (define lines
         (map (λ (db) (map string->number db))
              (map (λ (bin) (string-split bin #rx"(?<=.)(?=.)")) (port->lines prt))))
-      (void)
       (answer 3 1 (day3a lines))
-      #;(answer 3 2 (day3b lines)))))
+      (answer 3 2 (day3b lines)))))
