@@ -56,7 +56,7 @@ You will need to ensure that you have the following packages installed:
 - ansi-color
 - threading
 
-Which you can do with from DrRacket or with the following:
+Which you can do from DrRacket or with the following:
 ```
 $ raco pkg install --auto threading
 $ raco pkg install --auto ansi-color
