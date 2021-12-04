@@ -39,7 +39,8 @@
 (check-equal? (get-at-bit (list (list 0 1 1) (list 1 0 1)) 0) (list 1 0))
 
 ;; [ListOf Bit] -> Bit
-;; returns the most occuring bit
+;; returns the *st occuring bit
+;; > would give most, < would give least
 (define *st-bit
   (λ (f ls zeros ones)
     (cond
@@ -47,12 +48,15 @@
       [(zero? (car ls)) (*st-bit f (cdr ls) (add1 zeros) ones)]
       [else (*st-bit f (cdr ls) zeros (add1 ones))])))
 
+(check-equal? (*st-bit > (list 0 0 1 0 0) 0 0) 0)
+(check-equal? (*st-bit < (list 0 0 1 0 0) 0 0) 1)
+
 ;; [ListOf Bin] -> Bin
+;; returns a list of the *st occuring bit, given a list of bins
 (define rate
   (λ (f ls)
     (for/list ([i (in-range 12)])
       (*st-bit f (get-at-bit ls i) 0 0))))
-
 
 ;; (: binary->natural (-> (Listof (Union 0 1)) Natural))
 ;; returns the decimal representation of a list of binaries
