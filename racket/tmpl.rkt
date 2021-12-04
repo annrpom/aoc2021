@@ -16,7 +16,7 @@
 ;                    
 
 (define dayNa
-  (λ (lst)
+  (λ (ls)
     (void)))
 
 
@@ -34,7 +34,7 @@
 ;                    
 
 (define dayNb
-  (λ (lst)
+  (λ (ls)
     (void)))
 
 
