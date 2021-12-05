@@ -15,7 +15,7 @@
 ;   ;                
 ;
 
-(define-struct marked [n])
+(define-struct marked [n] #:transparent)
 
 ;; from day 3, renaming from get-at-bit to list-at-index
 (define list-at-index
@@ -67,7 +67,7 @@
 ;; returns the sum of unmarked answers on a winning board
 (define day4a
   (λ (nums boards)
-    (match-define-values (board ind) (bingo nums boards 0))
+    (define-values (board ind) (bingo nums boards 0))
     (define unmarked (flatten (map (λ (row) (filter number? row)) board)))
     (* (foldl + 0 unmarked) (list-ref nums (sub1 ind)))))
 
@@ -84,13 +84,51 @@
 ;   ;                
 ;   ;                
 ;                    
+#;(define bingo-mod
+    (λ (nums boards ind)
+      (cond
+        [(> (length (filter winner? boards)) 0) (values (car (filter winner? boards)) ind)]
+        [else (bingo (cdr nums) (map (λ (b) (mark-board (car nums) b)) boards) (add1 ind))])))
+
+;; Board -> Board
+;; returns an unmarked version of the input board
+(define true-board
+  (λ (b) (map (λ (row) (map (λ (t) (if (number? t) t (marked-n t))) row)) b)))
+
+;; [ListOf Board] [ListOf [Board . Number]] Number -> [ListOf [Board . Number]]
+;; updates the current winners with the new winner
+(define update-winners
+  (λ (winners win-so-far ind)
+    (cond
+      [(null? winners) win-so-far]
+      [(not (member (true-board (car winners)) (map (λ (b) (true-board (car b))) win-so-far)))
+       (cons (cons (car winners) ind) (update-winners (cdr winners) win-so-far ind))]
+      [else (update-winners (cdr winners) win-so-far ind)])))
+
+
+(define bingo-mod
+  (λ (nums boards)
+    (for/fold ([wsf '()]
+               [bs boards])
+              ([n (in-list nums)]
+               [ind (in-naturals)])
+      (define markbs (map (λ (b) (mark-board n b)) bs))
+      (define winners (filter winner? markbs))
+      (if (> (length winners) 0)
+          (values (update-winners winners wsf ind) markbs)
+          (values wsf markbs)))))
 
 (define day4b
-  (λ (ls)
-    (void)))
+  (λ (nums boards)
+    (define-values (winners _) (bingo-mod nums boards))
+    (let* ([last (argmax cdr winners)]
+           [board (car last)]
+           [i (cdr last)]
+           [unmarked (flatten (map (λ (row) (filter number? row)) board))])
+    (* (foldl + 0 unmarked) (list-ref nums i)))))
 
 
-;                          
+;                         
 ;                 ;        
 ;                          
 ;                ;;        
@@ -114,34 +152,35 @@
 
 
 (module+ main
-    (call-with-input-file "data/day4.txt"
-      (lambda (prt)
-        (let* ([lines (map (λ (in) (string-split in #rx"\n\n")) (port->lines prt))]
-               [nums (map string->number (string-split (caar lines) #rx","))]
-               [boards (map (λ (row) (map string->number (flatten (map string-split row)))) (filter cons? (cdr lines)))])
-          (match-define-values (b e) (sublists boards 5))
-          (answer 4 1 (day4a nums b))
-          #;(answer 4 2 (day4b nums boards))))))
+  (call-with-input-file "data/day4.txt"
+    (lambda (prt)
+      (let* ([lines (map (λ (in) (string-split in #rx"\n\n")) (port->lines prt))]
+             [nums (map string->number (string-split (caar lines) #rx","))]
+             [boards (map (λ (row) (map string->number (flatten (map string-split row)))) (filter cons? (cdr lines)))])
+        (match-define-values (b e) (sublists boards 5))
+        (answer 4 1 (day4a nums b))
+        (answer 4 2 (day4b nums b))))))
 
-(module+ test
-  (define am-not-sane '(7 4 9 5 11 17 23 2 0 14 21 24 10 16 13 6 15 25 12 22 18 20 8 19 3 26 1))
-  (define sanity-check '(((22 13 17 11 0)
-                          (8 2 23 4 24)
-                          (21 9 14 16 7)
-                          (6 10 3 18 5)
-                          (1 12 20 15 19))
-                         ((3 15 0 2 22)
-                          (9 18 13 17 5)
-                          (19 8 7 25 23)
-                          (20 11 10 24 4)
-                          (14 21 16 12 6))
-                         ((14 21 17 24 4)
-                          (10 16 15 9 19)
-                          (18 8 23 26 20)
-                          (22 11 13 6 5)
-                          (2 0 12 3 7))))
-  #|(check-equal? (bingo am-not-sane sanity-check) '(((#<marked> #<marked> #<marked> #<marked> #<marked>)
+
+(define am-not-sane '(7 4 9 5 11 17 23 2 0 14 21 24 10 16 13 6 15 25 12 22 18 20 8 19 3 26 1))
+(define sanity-check '(((22 13 17 11 0)
+                        (8 2 23 4 24)
+                        (21 9 14 16 7)
+                        (6 10 3 18 5)
+                        (1 12 20 15 19))
+                       ((3 15 0 2 22)
+                        (9 18 13 17 5)
+                        (19 8 7 25 23)
+                        (20 11 10 24 4)
+                        (14 21 16 12 6))
+                       ((14 21 17 24 4)
+                        (10 16 15 9 19)
+                        (18 8 23 26 20)
+                        (22 11 13 6 5)
+                        (2 0 12 3 7))))
+
+#|(check-equal? (bingo am-not-sane sanity-check) '(((#<marked> #<marked> #<marked> #<marked> #<marked>)
                                                     (10 16 15 #<marked> 19)
                                                     (18 8 #<marked> 26 20)
                                                     (22 #<marked> 13 6 #<marked>)
-                                                    (#<marked> #<marked> 12 3 #<marked>)))|#)
+                                                    (#<marked> #<marked> 12 3 #<marked>)))|#
