@@ -3,20 +3,7 @@
 (require rackunit)
 
 
-;                    
-;                    
-;          ;     ;;  
-;          ;    ; ;  
-;   ;;;;  ;;;;    ;  
-;   ;   ;  ;      ;  
-;   ;   ;  ;      ;  
-;   ;   ;  ;      ;  
-;   ;;;;   ;;;  ;;;;;
-;   ;                
-;   ;                
-;                    
-
-
+;; pt 1
 ;; [ListOfNumber] -> [ListOf [PairOf Number]]
 ;; returns a list of pairs of (prior . current) if there is a prior and current that exists
 (define pair-off
@@ -52,19 +39,7 @@
     (count-inc-pairs (pair-off lst) 0)))
 
 
-;                    
-;                    
-;          ;     ;;; 
-;          ;    ;   ;
-;   ;;;;  ;;;;      ;
-;   ;   ;  ;       ;;
-;   ;   ;  ;      ;; 
-;   ;   ;  ;     ;   
-;   ;;;;   ;;;  ;;;;;
-;   ;                
-;   ;                
-;
-
+;; pt 2
 ;; [ListOfNumber] -> [ListOf [TripleOf Number]]
 ;; returns a list of triples of (prior . current . next) if such exist
 (define triple-off
@@ -94,6 +69,7 @@
   (λ (lst)
     (day1a (flat-triples (triple-off lst)))))
 
+;; main
 (module+ main
     (call-with-input-file "data/day1.txt"
       (lambda (prt)

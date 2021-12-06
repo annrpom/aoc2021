@@ -2,19 +2,7 @@
 (require "lib/common.rkt")
 (require rackunit)
 
-;                    
-;                    
-;          ;     ;;  
-;          ;    ; ;  
-;   ;;;;  ;;;;    ;  
-;   ;   ;  ;      ;  
-;   ;   ;  ;      ;  
-;   ;   ;  ;      ;  
-;   ;;;;   ;;;  ;;;;;
-;   ;                
-;   ;                
-;
-
+;; pt 1
 (define-struct marked [n] #:transparent)
 
 ;; from day 3, renaming from get-at-bit to list-at-index
@@ -72,24 +60,7 @@
     (* (foldl + 0 unmarked) (list-ref nums (sub1 ind)))))
 
 
-;                    
-;                    
-;          ;     ;;; 
-;          ;    ;   ;
-;   ;;;;  ;;;;      ;
-;   ;   ;  ;       ;;
-;   ;   ;  ;      ;; 
-;   ;   ;  ;     ;   
-;   ;;;;   ;;;  ;;;;;
-;   ;                
-;   ;                
-;                    
-#;(define bingo-mod
-    (λ (nums boards ind)
-      (cond
-        [(> (length (filter winner? boards)) 0) (values (car (filter winner? boards)) ind)]
-        [else (bingo (cdr nums) (map (λ (b) (mark-board (car nums) b)) boards) (add1 ind))])))
-
+;; pt 2
 ;; Board -> Board
 ;; returns an unmarked version of the input board
 (define true-board
@@ -104,7 +75,6 @@
       [(not (member (true-board (car winners)) (map (λ (b) (true-board (car b))) win-so-far)))
        (cons (cons (car winners) ind) (update-winners (cdr winners) win-so-far ind))]
       [else (update-winners (cdr winners) win-so-far ind)])))
-
 
 (define bingo-mod
   (λ (nums boards)
@@ -128,19 +98,7 @@
     (* (foldl + 0 unmarked) (list-ref nums i)))))
 
 
-;                         
-;                 ;        
-;                          
-;                ;;        
-;   ;;;;; ;;;;    ;   ; ;; 
-;   ; ; ;     ;   ;   ;;  ;
-;   ; ; ;  ;;;;   ;   ;   ;
-;   ; ; ; ;   ;   ;   ;   ;
-;   ; ; ; ;;;;; ;;;;; ;   ;
-;                          
-;                          
-;
-
+;; main
 ;; [ListOf X] -> [ListOf [ListOf X]]
 ;; returns a nested list of lists given how many elements are supposed to be in the sublist
 (define sublists

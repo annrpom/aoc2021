@@ -2,19 +2,7 @@
 (require "lib/common.rkt")
 (require rackunit)
 
-;                    
-;                    
-;          ;     ;;  
-;          ;    ; ;  
-;   ;;;;  ;;;;    ;  
-;   ;   ;  ;      ;  
-;   ;   ;  ;      ;  
-;   ;   ;  ;      ;  
-;   ;;;;   ;;;  ;;;;;
-;   ;                
-;   ;                
-;
-
+;; pt 1
 ;; Depth-Step -> Number
 ;; returns the proper int represtation of a step relative to depth
 (define depth-calc
@@ -56,20 +44,7 @@
   (λ (ls)
     (take-steps ls)))
 
-
-;                    
-;                    
-;          ;     ;;; 
-;          ;    ;   ;
-;   ;;;;  ;;;;      ;
-;   ;   ;  ;       ;;
-;   ;   ;  ;      ;; 
-;   ;   ;  ;     ;   
-;   ;;;;   ;;;  ;;;;;
-;   ;                
-;   ;                
-;
-
+;; pt 2
 ;; [ListOf Step] Number Number Number -> Number
 ;; returns horizontal * depth after steps are processed
 (define take-steps-mod
@@ -89,20 +64,7 @@
   (λ (ls)
     (take-steps-mod ls)))
 
-
-;                          
-;                 ;        
-;                          
-;                ;;        
-;   ;;;;; ;;;;    ;   ; ;; 
-;   ; ; ;     ;   ;   ;;  ;
-;   ; ; ;  ;;;;   ;   ;   ;
-;   ; ; ; ;   ;   ;   ;   ;
-;   ; ; ; ;;;;; ;;;;; ;   ;
-;                          
-;                          
-;                          
-
+;; main
 (module+ main
     (call-with-input-file "data/day2.txt"
       (lambda (prt)

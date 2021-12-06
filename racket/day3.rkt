@@ -2,19 +2,7 @@
 (require "lib/common.rkt")
 (require rackunit)
 
-;                    
-;                    
-;          ;     ;;  
-;          ;    ; ;  
-;   ;;;;  ;;;;    ;  
-;   ;   ;  ;      ;  
-;   ;   ;  ;      ;  
-;   ;   ;  ;      ;  
-;   ;;;;   ;;;  ;;;;;
-;   ;                
-;   ;                
-;
-
+;; pt 1
 (define sanity-check
   (list (list 0 0 1 0 0)
         (list 1 1 1 1 0)
@@ -77,19 +65,7 @@
       (* gamma epsilon))))
 
 
-;                    
-;                    
-;          ;     ;;; 
-;          ;    ;   ;
-;   ;;;;  ;;;;      ;
-;   ;   ;  ;       ;;
-;   ;   ;  ;      ;; 
-;   ;   ;  ;     ;   
-;   ;;;;   ;;;  ;;;;;
-;   ;                
-;   ;                
-;                    
-
+;; pt 2
 ;; [ListOf Bin] -> Bin
 ;; return the bin representation of oxygen calc
 (define element
@@ -114,18 +90,7 @@
       (* oxygen co2))))
 
 
-;                          
-;                 ;        
-;                          
-;                ;;        
-;   ;;;;; ;;;;    ;   ; ;; 
-;   ; ; ;     ;   ;   ;;  ;
-;   ; ; ;  ;;;;   ;   ;   ;
-;   ; ; ; ;   ;   ;   ;   ;
-;   ; ; ; ;;;;; ;;;;; ;   ;
-;                          
-;                          
-;                          
+;; main                         
 (module+ main
   (call-with-input-file "data/day3.txt"
     (lambda (prt)
