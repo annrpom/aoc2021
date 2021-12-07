@@ -31,10 +31,8 @@
 ;; returns the increase between each step from k to n
 (define summation
   (λ (k n)
-    (for/fold ([sum 0])
-              ([i (in-range (abs (- k n)))]
-               [j (in-naturals)])
-      (+ sum (add1 j)))))
+    (define x (abs (- k n)))
+    (/ (+ (sqr x) x) 2)))
 
 (check-equal? (summation 16 5) 66)
 
