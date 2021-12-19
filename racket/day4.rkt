@@ -24,7 +24,7 @@
 ;; returns whether a given board has a marked row or column
 (define winner?
   (λ (b)
-    (define rowwin (ormap (λ (row) (not (findf number? row))) b))  ;; marked? did not work in findf (why)
+    (define rowwin (ormap (λ (row) (not (findf number? row))) b)) 
     (define colwin (ormap (λ (row) (not (findf number? row))) (transpose-ish b)))
     (or rowwin colwin)))
 
@@ -39,8 +39,6 @@
   (λ (n b)
     (map (λ (row) (map (λ (tile) (if (eqv? n tile) (make-marked tile) tile)) row)) b)))
 
-;; this check-equal doesnt work ??? (why)
-;; (check-equal? (mark-board 4 '((4 2 5) (-3 -2 -1) (5 4 3))) '(((make-marked 4) 2 5) (-3 -2 -1) (5 (make-marked 4) 3)))
 (check-equal? (mark-board 0 '((4 2 5) (-3 -2 -1) (5 4 3))) '((4 2 5) (-3 -2 -1) (5 4 3)))
 
 ;; [ListOf Number] [ListOf Board] -> Board
